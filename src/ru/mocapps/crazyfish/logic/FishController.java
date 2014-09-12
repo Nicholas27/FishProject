@@ -44,7 +44,7 @@ public class FishController {
 	public void makeStep() {
 		for (int i = 0; i < fishes.size(); i++) {
 			Fish fish = fishes.get(i);
-			fish.makeStep();
+			fish.oldMakeStep();
 			Log.d("fish", fish.getName() + ": X = " + fish.getXPosition() + "; Y = " + fish.getYPosition());
 			fishes.set(i, fish);
 		}
@@ -71,6 +71,11 @@ public class FishController {
 
 	public int getFishCount() {
 		return fishes.size();
+	}
+
+	public ArrayList<Fish> getAllFish() {
+		// TODO Auto-generated method stub
+		return fishes;
 	}
 
 }

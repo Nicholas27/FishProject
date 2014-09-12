@@ -5,11 +5,13 @@ import java.util.Random;
 
 import org.andengine.util.debug.Debug;
 
+import android.util.Log;
+
 import ru.mocapps.crazyfish.exception.FishNotFoundException;
 import ru.mocapps.crazyfish.exception.FoodNotFoundException;
 
 public class LogicController extends Thread {
-	private static int delay = 200;
+	private static int delay = 20;
 	
 	private static int fieldWidth;
 	private static int fieldHeight;
@@ -111,7 +113,24 @@ public class LogicController extends Thread {
 			long time1 = System.currentTimeMillis();
 			foodController.makeStep();
 			fishController.makeStep();
-			Debug.d("logic", "fish = " + fishController.getFishCount());
+			
+			/*
+			for (Fish fish : fishController.getAllFish()) {
+				Log.d("object log", "FISH: "+ fish.getName() + "x=" + fish.getXPosition() + "; y="+fish.getYPosition());
+			}
+			
+			for (Food food : foodController.getAllFood()) {
+				Log.d("object log", "FOOD: "+ food.getName() + "x=" + food.getXPosition() + "; y="+food.getYPosition());
+			}
+			
+			Log.d("object log", "\n=================\n");
+			*/
+			
+			for (Fish fish : fishController.getAllFish()) {
+				Log.d("logic", "FISH- "+fish.getName() + " rotation = " + fish.getRotation());
+			}
+			
+			Log.d("logic", "\n=================\n");
 			
 			long time2 = System.currentTimeMillis();
 			try {

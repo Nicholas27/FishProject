@@ -3,6 +3,8 @@ package ru.mocapps.crazyfish.logic;
 import java.util.ArrayList;
 import java.util.Random;
 
+import android.util.Log;
+
 import ru.mocapps.crazyfish.exception.FoodNotFoundException;
 
 public abstract class Fish {
@@ -12,6 +14,7 @@ public abstract class Fish {
 	// position vars
 	protected float[] position;
 	protected float[] direction;
+	protected float rotation;
 
 	// target
 	protected enum TargetType {
@@ -36,18 +39,19 @@ public abstract class Fish {
 	protected int experience;
 
 	public Fish(float xPos, float yPos, String name) {
+		this.random = new Random(System.currentTimeMillis());
 		this.fishName = name;
 		this.position = new float[2];
 		this.direction = new float[2];
 		this.position[0] = xPos;
 		this.position[1] = yPos;
-		this.direction[0] = 0.5f;
-		this.direction[1] = 0.5f;
+		this.direction[0] = random.nextFloat();
+		this.direction[1] = random.nextFloat();
 		this.level = 1;
 		this.experience = 0;
 		this.speed = 1;
 		this.directionChange = 10;
-		this.random = new Random(System.currentTimeMillis());
+		
 		targetType = TargetType.None;
 	}
 
@@ -92,6 +96,7 @@ public abstract class Fish {
 				target[0] = food.getXPosition();
 				target[1] = food.getYPosition();
 				targetType = TargetType.Food;
+				targetFoodName = food.getName();
 			} else {
 				target = targetRandomPosition;
 			}
@@ -102,6 +107,7 @@ public abstract class Fish {
 				target[0] = food.getXPosition();
 				target[1] = food.getYPosition();
 				targetType = TargetType.Food;
+				targetFoodName = food.getName();
 			} else {
 				target[0] = random.nextInt(LogicController.getFieldWidth());
 				target[1] = random.nextInt(LogicController.getFieldHeight());
@@ -113,6 +119,7 @@ public abstract class Fish {
 		return target;
 	}
 
+	/*
 	public void makeStep() {
 		float[] target = generateTargetPoint();
 		
@@ -147,6 +154,46 @@ public abstract class Fish {
 		isTargetReached(target);
 		fix();
 	}
+	*/
+	
+	public void oldMakeStep(){
+		float[] target = generateTargetPoint();
+		
+		// vector
+		float xVector = target[0] - position[0];
+		float yVector = target[1] - position[1];
+		
+		if (Math.abs(xVector) >= Math.abs(yVector)) {
+			direction[0] = xVector / Math.abs(xVector);
+			direction[1] = yVector / Math.abs(xVector);
+		} else {
+			direction[0] = xVector / Math.abs(yVector);
+			direction[1] = yVector / Math.abs(yVector);
+		}
+
+		rotation = (float) Math.atan2(yVector, xVector);
+		position[0] += direction[0] * speed;
+		position[1] += direction[1] * speed;
+		
+		// moving
+		if (position[0] > LogicController.getFieldWidth()) {
+			position[0] = LogicController.getFieldWidth();
+		}
+
+		if (position[0] < 0) {
+			position[0] = 0;
+		}
+
+		if (position[1] < 0) {
+			position[1] = 0;
+		}
+
+		if (position[1] > LogicController.getFieldHeight()) {
+			position[1] = LogicController.getFieldHeight();
+		}
+		
+		isTargetReached(target);
+	}
 	
 	/* немного крутого аскея
 	      .--.   |V|
@@ -168,7 +215,7 @@ public abstract class Fish {
 	 */
 
 	public boolean isTargetReached(float[] target) {
-		if (CMath.distance(position[0], position[1], target[0], target[1]) < 5) {
+		if (CMath.distance(position[0], position[1], target[0], target[1]) < 10) {
 			switch (targetType) {
 			case Food:
 				// if we enough near food
@@ -186,13 +233,6 @@ public abstract class Fish {
 		return false;
 	}
 
-	// fixes all fish location params
-	public void fix() {
-		position[0] = Math.min(Math.max(0, position[0]),
-				LogicController.getFieldWidth());
-		position[1] = Math.min(Math.max(0, position[1]),
-				LogicController.getFieldHeight());
-	}
 
 	public String getName() {
 		return fishName;
@@ -215,7 +255,7 @@ public abstract class Fish {
 	}
 
 	public float getRotation() {
-		return (float) Math.atan(direction[1] / direction[0]);
+		return rotation;
 	}
 
 	public float getSpeed() {
