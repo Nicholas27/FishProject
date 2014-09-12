@@ -279,6 +279,8 @@ public class FishActivity extends SimpleBaseGameActivity implements
 		scene.registerUpdateHandler(this.physicsWorld);
 		scene.setOnAreaTouchListener(this);
 
+		
+		
 		addFish(0, 50);
 		addFish(150, 50);
 		addFish(100, 250);
