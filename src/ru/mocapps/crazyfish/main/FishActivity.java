@@ -195,7 +195,6 @@ public class FishActivity extends SimpleBaseGameActivity implements
 		// foodSprite.animate(animationDelay, true);
 		scene.registerTouchArea(foodSprite);
 		scene.attachChild(foodSprite);
-
 	}
 
 	// удаление по имени
@@ -205,6 +204,7 @@ public class FishActivity extends SimpleBaseGameActivity implements
 				FishActivity.scene.unregisterTouchArea(food);
 				FishActivity.scene.detachChild(food);
 				listFood.remove(food);
+				break;
 			}
 		}
 		System.gc();
@@ -278,11 +278,13 @@ public class FishActivity extends SimpleBaseGameActivity implements
 		new FishParts(100, 100, getVertexBufferObjectManager(), scene);
 		
 
+		
+		
 		addFish(0, 50);
-		addFish(50, 50);
-		addFish(100, 50);
+		addFish(150, 50);
+		addFish(100, 250);
 		addFish(50, 100);
-		addFish(200, 200);
+		addFish(350, 200);
 
 		return scene;
 	}

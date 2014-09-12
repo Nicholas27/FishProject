@@ -25,7 +25,7 @@ public class AnimateFish extends AnimatedSprite {
 		try {
 			this.setX(LogicController.getFish(fishName).getXPosition());
 			this.setY(LogicController.getFish(fishName).getYPosition());
-			this.setRotation(LogicController.getFish(fishName).getRotation());
+			this.setRotation((float) Math.toDegrees(LogicController.getFish(fishName).getRotation() + 90));
 		} catch (FishNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

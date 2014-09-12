@@ -2,6 +2,8 @@ package ru.mocapps.crazyfish.logic;
 
 import java.util.ArrayList;
 
+import android.util.Log;
+
 import ru.mocapps.crazyfish.exception.FoodNotFoundException;
 import ru.mocapps.crazyfish.main.FishActivity;
 
@@ -31,13 +33,16 @@ public class FoodController extends Thread {
 	}
 
 	public void removeFood(String name) {
+		Log.d("logic", "foodController eat food: " + name);
 		for (Food food : foods) {
 			if (food.getName() == name) {
 				FishActivity.removeFood(name);
 				foods.remove(food);
+				
 				break;
 			}
 		}
+		
 	}
 
 	public Food getFood(String name) {
@@ -60,7 +65,6 @@ public class FoodController extends Thread {
 			}
 			return false;
 		}
-		
 	}
 	
 	public boolean isFoodAviable() {
