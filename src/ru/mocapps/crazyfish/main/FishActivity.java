@@ -30,7 +30,9 @@ import ru.mocapps.crazyfish.logic.LogicController;
 
 import ru.mocapps.crazyfish.sprite.AnimateFish;
 import ru.mocapps.crazyfish.sprite.AnimateFood;
+import ru.mocapps.crazyfish.sprite.FishParts;
 import android.hardware.SensorManager;
+import android.view.Display;
 
 import com.badlogic.gdx.math.Vector2;
 
@@ -43,8 +45,8 @@ public class FishActivity extends SimpleBaseGameActivity implements
 	public static Scene scene;
 	public static Camera camera;
 
-	public static final int CAMERA_WIDTH = 800;
-	public static final int CAMERA_HEIGHT = 480;
+	public static  int CAMERA_WIDTH;
+	public static  int CAMERA_HEIGHT;
 	public static final float DEMO_VELOCITY = 100.0f;
 
 	private BitmapTextureAtlas mainTexture;
@@ -62,7 +64,7 @@ public class FishActivity extends SimpleBaseGameActivity implements
 	// private BitmapTextureAtlas fishAtlas;
 	public static ITextureRegion fishRegion;
 
-	public PhysicsWorld physicsWorld;
+	public static PhysicsWorld physicsWorld;
 
 	// private SceneManager sceneManager;
 
@@ -70,10 +72,31 @@ public class FishActivity extends SimpleBaseGameActivity implements
 
 	private static ArrayList<AnimateFood> listFood = new ArrayList<AnimateFood>();
 	private static ArrayList<AnimateFish> listFish = new ArrayList<AnimateFish>();
+	
+
+	private BitmapTextureAtlas fishBitmapHead;
+	private BitmapTextureAtlas fishBitmapBody;
+	private BitmapTextureAtlas fishBitmapBackNail;
+	private BitmapTextureAtlas fishBitmapMiddleNail;
+
+	public static TiledTextureRegion body;
+	public static TiledTextureRegion head;
+	public static TiledTextureRegion backnail;
+	public static TiledTextureRegion middlenail;
+	public static TiledTextureRegion fishHammer2;
+	
+	public static int animationDelay = 45;
+
 
 	@Override
 	public EngineOptions onCreateEngineOptions() {
 
+		//width/height
+		Display display = getWindowManager().getDefaultDisplay(); 
+		CAMERA_WIDTH = display.getWidth();
+		CAMERA_HEIGHT = display.getHeight();
+
+		    
 		// create camera
 		camera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
 
@@ -84,18 +107,8 @@ public class FishActivity extends SimpleBaseGameActivity implements
 		return options;
 	}
 
-	/*
-	 * private BitmapTextureAtlas fishBitmapHead; private BitmapTextureAtlas
-	 * fishBitmapBody; private BitmapTextureAtlas fishBitmapBackNail; private
-	 * BitmapTextureAtlas fishBitmapMiddleNail;
-	 */
-	public static TiledTextureRegion body;
-	public static TiledTextureRegion head;
-	public static TiledTextureRegion backnail;
-	public static TiledTextureRegion middlenail;
-	public static TiledTextureRegion fishHammer2;
-
-	public static int animationDelay = 45;
+	
+	
 
 	private void loadGfx() {
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
@@ -112,7 +125,32 @@ public class FishActivity extends SimpleBaseGameActivity implements
 		foodFish = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(
 				foodTexture, this, "food/cornnic.png", 0, 0, 1, 1);
 		foodTexture.load();
+		
+		
+		fishBitmapHead = new BitmapTextureAtlas(getTextureManager(), 27, 26);
+
+		head = BitmapTextureAtlasTextureRegionFactory
+				.createTiledFromAsset(fishBitmapHead, this, "parts/head.png",
+						0, 0, 1, 1);
+		fishBitmapHead.load();
+		
+		fishBitmapBody = new BitmapTextureAtlas(getTextureManager(), 29, 63);
+
+		body = BitmapTextureAtlasTextureRegionFactory
+				.createTiledFromAsset(fishBitmapBody, this, "parts/body.png",
+						0, 0, 1, 1);
+		fishBitmapBody.load();
+		
+		fishBitmapMiddleNail = new BitmapTextureAtlas(getTextureManager(), 16, 19);
+
+		middlenail = BitmapTextureAtlasTextureRegionFactory
+				.createTiledFromAsset(fishBitmapBody, this, "parts/middle nail.png",
+						0, 0, 1, 1);
+		fishBitmapMiddleNail.load();
 	}
+	
+	
+	
 
 	@Override
 	public boolean onSceneTouchEvent(Scene pScene, TouchEvent pSceneTouchEvent) {
@@ -236,6 +274,9 @@ public class FishActivity extends SimpleBaseGameActivity implements
 
 		scene.registerUpdateHandler(this.physicsWorld);
 		scene.setOnAreaTouchListener(this);
+		
+		new FishParts(100, 100, getVertexBufferObjectManager(), scene);
+		
 
 		addFish(0, 50);
 		addFish(50, 50);
