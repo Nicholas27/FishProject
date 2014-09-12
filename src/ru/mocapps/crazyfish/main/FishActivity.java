@@ -45,8 +45,8 @@ public class FishActivity extends SimpleBaseGameActivity implements
 	public static Scene scene;
 	public static Camera camera;
 
-	public static  int CAMERA_WIDTH;
-	public static  int CAMERA_HEIGHT;
+	public static int CAMERA_WIDTH;
+	public static int CAMERA_HEIGHT;
 	public static final float DEMO_VELOCITY = 100.0f;
 
 	private BitmapTextureAtlas mainTexture;
@@ -72,7 +72,6 @@ public class FishActivity extends SimpleBaseGameActivity implements
 
 	private static ArrayList<AnimateFood> listFood = new ArrayList<AnimateFood>();
 	private static ArrayList<AnimateFish> listFish = new ArrayList<AnimateFish>();
-	
 
 	private BitmapTextureAtlas fishBitmapHead;
 	private BitmapTextureAtlas fishBitmapBody;
@@ -84,19 +83,17 @@ public class FishActivity extends SimpleBaseGameActivity implements
 	public static TiledTextureRegion backnail;
 	public static TiledTextureRegion middlenail;
 	public static TiledTextureRegion fishHammer2;
-	
-	public static int animationDelay = 45;
 
+	public static int animationDelay = 145;
 
 	@Override
 	public EngineOptions onCreateEngineOptions() {
 
-		//width/height
-		Display display = getWindowManager().getDefaultDisplay(); 
+		// width/height
+		Display display = getWindowManager().getDefaultDisplay();
 		CAMERA_WIDTH = display.getWidth();
 		CAMERA_HEIGHT = display.getHeight();
 
-		    
 		// create camera
 		camera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
 
@@ -106,9 +103,6 @@ public class FishActivity extends SimpleBaseGameActivity implements
 
 		return options;
 	}
-
-	
-	
 
 	private void loadGfx() {
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
@@ -125,32 +119,27 @@ public class FishActivity extends SimpleBaseGameActivity implements
 		foodFish = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(
 				foodTexture, this, "food/cornnic.png", 0, 0, 1, 1);
 		foodTexture.load();
-		
-		
+
 		fishBitmapHead = new BitmapTextureAtlas(getTextureManager(), 27, 26);
 
-		head = BitmapTextureAtlasTextureRegionFactory
-				.createTiledFromAsset(fishBitmapHead, this, "parts/head.png",
-						0, 0, 1, 1);
+		head = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(
+				fishBitmapHead, this, "parts/head.png", 0, 0, 1, 1);
 		fishBitmapHead.load();
-		
+
 		fishBitmapBody = new BitmapTextureAtlas(getTextureManager(), 29, 63);
 
-		body = BitmapTextureAtlasTextureRegionFactory
-				.createTiledFromAsset(fishBitmapBody, this, "parts/body.png",
-						0, 0, 1, 1);
+		body = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(
+				fishBitmapBody, this, "parts/body.png", 0, 0, 1, 1);
 		fishBitmapBody.load();
-		
-		fishBitmapMiddleNail = new BitmapTextureAtlas(getTextureManager(), 16, 19);
+
+		fishBitmapMiddleNail = new BitmapTextureAtlas(getTextureManager(), 16,
+				19);
 
 		middlenail = BitmapTextureAtlasTextureRegionFactory
-				.createTiledFromAsset(fishBitmapBody, this, "parts/middle nail.png",
-						0, 0, 1, 1);
+				.createTiledFromAsset(fishBitmapMiddleNail, this,
+						"parts/middle nail.png", 0, 0, 1, 1);
 		fishBitmapMiddleNail.load();
 	}
-	
-	
-	
 
 	@Override
 	public boolean onSceneTouchEvent(Scene pScene, TouchEvent pSceneTouchEvent) {
@@ -174,12 +163,27 @@ public class FishActivity extends SimpleBaseGameActivity implements
 		return false;
 	}
 
+	int i = 0;
+
 	public void addFish(float pX, float pY) {
 		AnimateFish animateFish;
 		String s_name = LogicController.addFish(pX, pY);
 		animateFish = new AnimateFish(pX, pY, fishHammer,
 				getVertexBufferObjectManager(), s_name);
+
+		
+
 		animateFish.animate(animationDelay, true);
+
+		
+		if (i == 0) {
+			animateFish.setCurrentTileIndex(1);
+			i = 1;
+		} else {
+			i = 0;
+			animateFish.setCurrentTileIndex(11);
+		}
+		
 		listFish.add(animateFish);
 		scene.registerTouchArea(animateFish);
 		scene.attachChild(animateFish);
@@ -195,7 +199,6 @@ public class FishActivity extends SimpleBaseGameActivity implements
 		// foodSprite.animate(animationDelay, true);
 		scene.registerTouchArea(foodSprite);
 		scene.attachChild(foodSprite);
-
 	}
 
 	// удаление по имени
@@ -205,6 +208,7 @@ public class FishActivity extends SimpleBaseGameActivity implements
 				FishActivity.scene.unregisterTouchArea(food);
 				FishActivity.scene.detachChild(food);
 				listFood.remove(food);
+				break;
 			}
 		}
 		System.gc();
@@ -274,15 +278,12 @@ public class FishActivity extends SimpleBaseGameActivity implements
 
 		scene.registerUpdateHandler(this.physicsWorld);
 		scene.setOnAreaTouchListener(this);
-		
-		new FishParts(100, 100, getVertexBufferObjectManager(), scene);
-		
 
 		addFish(0, 50);
-		addFish(50, 50);
-		addFish(100, 50);
+		addFish(150, 50);
+		addFish(100, 250);
 		addFish(50, 100);
-		addFish(200, 200);
+		addFish(350, 200);
 
 		return scene;
 	}
