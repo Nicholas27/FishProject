@@ -3,10 +3,6 @@ package ru.mocapps.crazyfish.logic;
 import java.util.ArrayList;
 import java.util.Random;
 
-import android.util.Log;
-
-import ru.mocapps.crazyfish.exception.FoodNotFoundException;
-
 public abstract class Fish {
 	private Random random;
 
@@ -34,6 +30,7 @@ public abstract class Fish {
 	protected float maxHunger;
 	protected float life;
 	protected float maxLife;
+	
 	// exp
 	protected int level;
 	protected int experience;
@@ -47,7 +44,7 @@ public abstract class Fish {
 		this.position[1] = yPos;
 		this.direction[0] = random.nextFloat();
 		this.direction[1] = random.nextFloat();
-		this.level = 1;
+		this.level = 0;
 		this.experience = 0;
 		this.maxSpeed = 5;
 		this.speed = maxSpeed;
@@ -61,7 +58,7 @@ public abstract class Fish {
 	}
 
 	protected Food getNearestFood() {
-		ArrayList<Food> allFood = LogicController.getAllFood();
+		ArrayList<Food> allFood = new ArrayList<Food>(LogicController.getAllFood());
 		Food nearest = null;
 		float distance = Float.MAX_VALUE;
 		for (Food food : allFood) {
@@ -146,22 +143,8 @@ public abstract class Fish {
 		position[0] += direction[0] * speed;
 		position[1] += direction[1] * speed;
 
-		// проверка выхода за поле
-		if (position[0] > LogicController.getFieldWidth()) {
-			position[0] = LogicController.getFieldWidth();
-		}
-
-		if (position[0] < 0) {
-			position[0] = 0;
-		}
-
-		if (position[1] < 0) {
-			position[1] = 0;
-		}
-
-		if (position[1] > LogicController.getFieldHeight()) {
-			position[1] = LogicController.getFieldHeight();
-		}
+		position[0] = Math.max(position[0], Math.min(position[0], LogicController.getFieldWidth()));
+		position[0] = Math.max(position[0], Math.min(position[0], LogicController.getFieldHeight()));
 
 		isTargetReached(target); // проверка достижения цели и поедание еды
 		calculateLifeHunger();

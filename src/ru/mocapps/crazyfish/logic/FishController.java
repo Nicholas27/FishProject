@@ -2,8 +2,6 @@ package ru.mocapps.crazyfish.logic;
 
 import java.util.ArrayList;
 
-import android.util.Log;
-
 import ru.mocapps.crazyfish.exception.FishNotFoundException;
 import ru.mocapps.crazyfish.main.FishActivity;
 
@@ -43,26 +41,10 @@ public class FishController {
 
 	// make steps for all fishes
 	public void makeStep() {
-		for (int i = 0; i < fishes.size(); i++) {
-			Fish fish = fishes.get(i);
+		for (Fish fish : fishes) {
 			fish.makeStep();
-			//Log.d("fish", fish.getName() + ": X = " + fish.getXPosition() + "; Y = " + fish.getYPosition());
-			fishes.set(i, fish);
-		}
-		//Log.d("fish", "    ---------        ");
-	}
-
-	/*
-	public void printTrace() {
-		if (fishes.size() > 0) {
-			System.out.println("FISH: count = " + fishes.size());
-			for (Fish fish : fishes) {
-				System.out.println(fish.getName() + "x=" + fish.getXPosition()
-						+ "y=" + fish.getYPosition());
-			}
 		}
 	}
-	 */
 	
 	public Fish getFish(String name) throws FishNotFoundException {
 		for (Fish fish : fishes) {
@@ -77,7 +59,6 @@ public class FishController {
 	}
 
 	public ArrayList<Fish> getAllFish() {
-		// TODO Auto-generated method stub
 		return fishes;
 	}
 
