@@ -49,10 +49,15 @@ public abstract class Fish {
 		this.direction[1] = random.nextFloat();
 		this.level = 1;
 		this.experience = 0;
-		this.speed = 1;
+		this.maxSpeed = 5;
+		this.speed = maxSpeed;
 		this.directionChange = 10;
-		
 		targetType = TargetType.None;
+
+		maxHunger = 300;
+		hunger = 250;
+		maxLife = 300;
+		life = 250;
 	}
 
 	protected Food getNearestFood() {
@@ -75,11 +80,12 @@ public abstract class Fish {
 		switch (targetType) {
 		case Food:
 			// food остался на поле?
-			if (LogicController.isFoodAviable(targetFoodName)) { 
+			if (LogicController.isFoodAviable(targetFoodName)) {
 				Food food = LogicController.getFood(targetFoodName);
 				target[0] = food.getXPosition();
 				target[1] = food.getYPosition();
-			} else if (LogicController.isFoodAviable()) { //вообще есть Food на поле?
+			} else if (LogicController.isFoodAviable()) { // вообще есть Food на
+															// поле?
 				Food food = getNearestFood();
 				target[0] = food.getXPosition();
 				target[1] = food.getYPosition();
@@ -91,7 +97,7 @@ public abstract class Fish {
 			}
 			break;
 		case Random:
-			if (LogicController.isFoodAviable()){
+			if (LogicController.isFoodAviable()) {
 				Food food = getNearestFood();
 				target[0] = food.getXPosition();
 				target[1] = food.getYPosition();
@@ -102,7 +108,7 @@ public abstract class Fish {
 			}
 			break;
 		default:
-			if (LogicController.isFoodAviable()){
+			if (LogicController.isFoodAviable()) {
 				Food food = getNearestFood();
 				target[0] = food.getXPosition();
 				target[1] = food.getYPosition();
@@ -119,50 +125,14 @@ public abstract class Fish {
 		return target;
 	}
 
-	/*
 	public void makeStep() {
 		float[] target = generateTargetPoint();
-		
-		//определение направления
-		float[] fullVector = new float[2];
-		fullVector[0] = target[0] - position[0];
-		fullVector[1] = target[1] - position[1];
-		
-		//создание еденичного вектора направления
-		float[] oneVector = new float[2];
-		if (fullVector[0] > fullVector[1]){
-			oneVector[0] = 1;
-			oneVector[1] = fullVector[1] / fullVector[0];
-		} else {
-			oneVector[0] = fullVector[0] / fullVector[1];
-			oneVector[1] = 1;
-		}
-		
-		//вычисляем, куда будем отклоняться и на сколько
-		float[] delta = new float[2];
-		delta[0] = (oneVector[0] - direction[0]) / directionChange;
-		delta[1] = (oneVector[1] - direction[1]) / directionChange;
-		
-		//изменяем направление
-		direction[0] += delta[0];
-		direction[1] += delta[1];
-		
-		//изменяем положение рыбки
-		position[0] += direction[0] * speed;
-		position[1] += direction[1] * speed;
-		
-		isTargetReached(target);
-		fix();
-	}
-	*/
-	
-	public void oldMakeStep(){
-		float[] target = generateTargetPoint();
-		
+
 		// vector
 		float xVector = target[0] - position[0];
 		float yVector = target[1] - position[1];
-		
+
+		//расчет направления
 		if (Math.abs(xVector) >= Math.abs(yVector)) {
 			direction[0] = xVector / Math.abs(xVector);
 			direction[1] = yVector / Math.abs(xVector);
@@ -171,11 +141,12 @@ public abstract class Fish {
 			direction[1] = yVector / Math.abs(yVector);
 		}
 
+		//расчет угла поворота и движение
 		rotation = (float) Math.atan2(yVector, xVector);
 		position[0] += direction[0] * speed;
 		position[1] += direction[1] * speed;
-		
-		// moving
+
+		// проверка выхода за поле
 		if (position[0] > LogicController.getFieldWidth()) {
 			position[0] = LogicController.getFieldWidth();
 		}
@@ -191,35 +162,55 @@ public abstract class Fish {
 		if (position[1] > LogicController.getFieldHeight()) {
 			position[1] = LogicController.getFieldHeight();
 		}
-		
-		isTargetReached(target);
-	}
-	
-	/* немного крутого аскея
-	      .--.   |V|
-	     /    \ _| /
-	     q .. p \ /
-	      \--/  //
-	     __||__//
-	    /.    _/
-	   // \  /
-	  //   ||
-	  \\  /  \
-	   )\|    |
-	  / || || |
-	  |/\| || |
-	     | || |
-	     \ || /
-	   __/ || \__
-	  \____/\____/ 
-	 */
 
-	public boolean isTargetReached(float[] target) {
+		isTargetReached(target); // проверка достижения цели и поедание еды
+		calculateLifeHunger();
+	}
+
+	//поедание еды, восстановления голода
+	private void eatFood() {
+		hunger += 100;
+		if (hunger > maxHunger) {
+			hunger = maxHunger;
+		}
+	}
+
+	//расчет голода и здоровья
+	private void calculateLifeHunger() {
+		hunger -= 0.5; //
+		if (hunger > 0){ //если голодаем
+			life++; //выздоравливаем
+			if (life > maxLife)
+				life = maxLife;
+		} else { //если не голодаем
+			life -= 0.5; //теряем здоровье
+			hunger = 0;
+		}
+		
+		//если закончилось здоровье, умираем
+		if (life < 0){
+			LogicController.dieFish(this.fishName);
+		}
+		
+		if (targetType == TargetType.Food){
+			//ускорение движения рыбы, если голодает
+			speed = maxSpeed;
+			if (hunger < maxHunger * 0.4){ //если рыба голодает
+				speed = maxSpeed * 2;
+			} 
+			if (hunger < maxHunger * 0.2){
+				speed = maxSpeed * 3;
+			}
+		}
+	}
+
+	private boolean isTargetReached(float[] target) {
 		if (CMath.distance(position[0], position[1], target[0], target[1]) < 10) {
 			switch (targetType) {
 			case Food:
 				// if we enough near food
 				LogicController.removeFood(targetFoodName); // eat food
+				eatFood();
 				targetType = TargetType.None;
 				break;
 			case Random:
@@ -233,7 +224,6 @@ public abstract class Fish {
 		return false;
 	}
 
-
 	public String getName() {
 		return fishName;
 	}
@@ -244,6 +234,10 @@ public abstract class Fish {
 
 	public float getLife() {
 		return life;
+	}
+	
+	public float getHunger() {
+		return hunger;
 	}
 
 	public float getMaxHunger() {

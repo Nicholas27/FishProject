@@ -73,10 +73,10 @@ public class FishActivity extends SimpleBaseGameActivity implements
 	private static ArrayList<AnimateFood> listFood = new ArrayList<AnimateFood>();
 	private static ArrayList<AnimateFish> listFish = new ArrayList<AnimateFish>();
 
-	private BitmapTextureAtlas fishBitmapHead;
-	private BitmapTextureAtlas fishBitmapBody;
-	private BitmapTextureAtlas fishBitmapBackNail;
-	private BitmapTextureAtlas fishBitmapMiddleNail;
+	// private BitmapTextureAtlas fishBitmapHead;
+	// private BitmapTextureAtlas fishBitmapBody;
+	// private BitmapTextureAtlas fishBitmapBackNail;
+	// private BitmapTextureAtlas fishBitmapMiddleNail;
 
 	public static TiledTextureRegion body;
 	public static TiledTextureRegion head;
@@ -120,25 +120,26 @@ public class FishActivity extends SimpleBaseGameActivity implements
 				foodTexture, this, "food/cornnic.png", 0, 0, 1, 1);
 		foodTexture.load();
 
-		fishBitmapHead = new BitmapTextureAtlas(getTextureManager(), 27, 26);
-
-		head = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(
-				fishBitmapHead, this, "parts/head.png", 0, 0, 1, 1);
-		fishBitmapHead.load();
-
-		fishBitmapBody = new BitmapTextureAtlas(getTextureManager(), 29, 63);
-
-		body = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(
-				fishBitmapBody, this, "parts/body.png", 0, 0, 1, 1);
-		fishBitmapBody.load();
-
-		fishBitmapMiddleNail = new BitmapTextureAtlas(getTextureManager(), 16,
-				19);
-
-		middlenail = BitmapTextureAtlasTextureRegionFactory
-				.createTiledFromAsset(fishBitmapMiddleNail, this,
-						"parts/middle nail.png", 0, 0, 1, 1);
-		fishBitmapMiddleNail.load();
+		/*
+		 * fishBitmapHead = new BitmapTextureAtlas(getTextureManager(), 27, 26);
+		 * 
+		 * head = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(
+		 * fishBitmapHead, this, "parts/head.png", 0, 0, 1, 1);
+		 * fishBitmapHead.load();
+		 * 
+		 * fishBitmapBody = new BitmapTextureAtlas(getTextureManager(), 29, 63);
+		 * 
+		 * body = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(
+		 * fishBitmapBody, this, "parts/body.png", 0, 0, 1, 1);
+		 * fishBitmapBody.load();
+		 * 
+		 * fishBitmapMiddleNail = new BitmapTextureAtlas(getTextureManager(),
+		 * 16, 19);
+		 * 
+		 * middlenail = BitmapTextureAtlasTextureRegionFactory
+		 * .createTiledFromAsset(fishBitmapMiddleNail, this,
+		 * "parts/middle nail.png", 0, 0, 1, 1); fishBitmapMiddleNail.load();
+		 */
 	}
 
 	@Override
@@ -161,65 +162,6 @@ public class FishActivity extends SimpleBaseGameActivity implements
 			return true;
 		}
 		return false;
-	}
-
-	int i = 0;
-
-	public void addFish(float pX, float pY) {
-		AnimateFish animateFish;
-		String s_name = LogicController.addFish(pX, pY);
-		animateFish = new AnimateFish(pX, pY, fishHammer,
-				getVertexBufferObjectManager(), s_name);
-
-		
-
-		animateFish.animate(animationDelay, true);
-
-		
-		if (i == 0) {
-			animateFish.setCurrentTileIndex(1);
-			i = 1;
-		} else {
-			i = 0;
-			animateFish.setCurrentTileIndex(11);
-		}
-		
-		listFish.add(animateFish);
-		scene.registerTouchArea(animateFish);
-		scene.attachChild(animateFish);
-	}
-
-	public void addFood(float pX, float pY) {
-		AnimateFood foodSprite;
-		String s_name = LogicController.addFood(pX, pY);
-		foodSprite = new AnimateFood(pX, pY, foodFish,
-				getVertexBufferObjectManager(), s_name);
-
-		listFood.add(foodSprite);
-		// foodSprite.animate(animationDelay, true);
-		scene.registerTouchArea(foodSprite);
-		scene.attachChild(foodSprite);
-	}
-
-	// удаление по имени
-	public static void removeFood(String s_name) {
-		for (AnimateFood food : listFood) {
-			if (food.getName() == s_name) {
-				FishActivity.scene.unregisterTouchArea(food);
-				FishActivity.scene.detachChild(food);
-				listFood.remove(food);
-				break;
-			}
-		}
-		System.gc();
-	}
-
-	public void removeFish(AnimateFish animFish) {
-		LogicController.removeFish(animFish.getName());
-		scene.unregisterTouchArea(animFish);
-		scene.detachChild(animFish);
-		animFish.dispose();
-		System.gc();
 	}
 
 	@Override
@@ -246,7 +188,7 @@ public class FishActivity extends SimpleBaseGameActivity implements
 		// createWalls();
 		// createFish();
 
-		this.physicsWorld = new PhysicsWorld(new Vector2(0,
+		FishActivity.physicsWorld = new PhysicsWorld(new Vector2(0,
 				SensorManager.GRAVITY_EARTH), true);
 
 		final VertexBufferObjectManager vertexBufferObjectManager = this
@@ -262,13 +204,13 @@ public class FishActivity extends SimpleBaseGameActivity implements
 
 		final FixtureDef wallFixtureDef = PhysicsFactory.createFixtureDef(0,
 				0.5f, 0.5f);
-		PhysicsFactory.createBoxBody(this.physicsWorld, ground,
+		PhysicsFactory.createBoxBody(FishActivity.physicsWorld, ground,
 				BodyType.StaticBody, wallFixtureDef);
-		PhysicsFactory.createBoxBody(this.physicsWorld, roof,
+		PhysicsFactory.createBoxBody(FishActivity.physicsWorld, roof,
 				BodyType.StaticBody, wallFixtureDef);
-		PhysicsFactory.createBoxBody(this.physicsWorld, left,
+		PhysicsFactory.createBoxBody(FishActivity.physicsWorld, left,
 				BodyType.StaticBody, wallFixtureDef);
-		PhysicsFactory.createBoxBody(this.physicsWorld, right,
+		PhysicsFactory.createBoxBody(FishActivity.physicsWorld, right,
 				BodyType.StaticBody, wallFixtureDef);
 
 		scene.attachChild(ground);
@@ -276,11 +218,9 @@ public class FishActivity extends SimpleBaseGameActivity implements
 		scene.attachChild(left);
 		scene.attachChild(right);
 
-		scene.registerUpdateHandler(this.physicsWorld);
+		scene.registerUpdateHandler(FishActivity.physicsWorld);
 		scene.setOnAreaTouchListener(this);
 
-		
-		
 		addFish(0, 50);
 		addFish(150, 50);
 		addFish(100, 250);
@@ -288,6 +228,58 @@ public class FishActivity extends SimpleBaseGameActivity implements
 		addFish(350, 200);
 
 		return scene;
+	}
+
+	public void addFish(float pX, float pY) {
+		AnimateFish animateFish;
+		String s_name = LogicController.addFish(pX, pY);
+		animateFish = new AnimateFish(pX, pY, fishHammer,
+				getVertexBufferObjectManager(), s_name);
+
+		animateFish.animate(animationDelay, true);
+
+		scene.registerTouchArea(animateFish);
+		scene.attachChild(animateFish);
+		listFish.add(animateFish);
+	}
+
+	public void addFood(float xPosition, float yPosition) {
+		AnimateFood foodSprite;
+		String foodName = LogicController.addFood(xPosition, yPosition);
+		foodSprite = new AnimateFood(xPosition, yPosition, foodFish,
+				getVertexBufferObjectManager(), foodName);
+
+		scene.registerTouchArea(foodSprite);
+		scene.attachChild(foodSprite);
+		listFood.add(foodSprite);
+	}
+
+	// удаление еды, вызывается в LogicController
+	public static void removeFood(String s_name) {
+		for (AnimateFood food : listFood) {
+			if (food.getName() == s_name) {
+				// FishActivity.scene.unregisterTouchArea(food);
+				// FishActivity.scene.detachChild(food);
+				food.removeFood();
+				listFood.remove(food);
+				break;
+			}
+		}
+		System.gc();
+	}
+
+	// удаление рыбы, вызывается в LogicController
+	public static void removeFish(String fishName) {
+		for (AnimateFish fish : listFish) {
+			if (fish.getName() == fishName) {
+				// FishActivity.scene.unregisterTouchArea(food);
+				// FishActivity.scene.detachChild(food);
+				fish.removeFish();
+				listFish.remove(fish);
+				break;
+			}
+		}
+		System.gc();
 	}
 
 }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.util.Log;
 
 import ru.mocapps.crazyfish.exception.FishNotFoundException;
+import ru.mocapps.crazyfish.main.FishActivity;
 
 public class FishController {
 	private ArrayList<Fish> fishes;
@@ -27,7 +28,6 @@ public class FishController {
 		if (type == "hammer") {
 			fishes.add(new HammerFish(xPos, yPos, name));
 		}
-
 	}
 
 	// delete fish, search by name
@@ -35,6 +35,7 @@ public class FishController {
 		for (Fish fish : fishes) {
 			if (fish.getName() == name) {
 				fishes.remove(fish);
+				FishActivity.removeFish(name);
 				break;
 			}
 		}
@@ -44,13 +45,14 @@ public class FishController {
 	public void makeStep() {
 		for (int i = 0; i < fishes.size(); i++) {
 			Fish fish = fishes.get(i);
-			fish.oldMakeStep();
-			Log.d("fish", fish.getName() + ": X = " + fish.getXPosition() + "; Y = " + fish.getYPosition());
+			fish.makeStep();
+			//Log.d("fish", fish.getName() + ": X = " + fish.getXPosition() + "; Y = " + fish.getYPosition());
 			fishes.set(i, fish);
 		}
-		Log.d("fish", "    ---------        ");
+		//Log.d("fish", "    ---------        ");
 	}
 
+	/*
 	public void printTrace() {
 		if (fishes.size() > 0) {
 			System.out.println("FISH: count = " + fishes.size());
@@ -60,7 +62,8 @@ public class FishController {
 			}
 		}
 	}
-
+	 */
+	
 	public Fish getFish(String name) throws FishNotFoundException {
 		for (Fish fish : fishes) {
 			if (fish.getName() == name)

@@ -33,7 +33,7 @@ public class FoodController extends Thread {
 	}
 
 	public void removeFood(String name) {
-		Log.d("logic", "foodController eat food: " + name);
+		//Log.d("logic", "foodController eat food: " + name);
 		for (Food food : foods) {
 			if (food.getName() == name) {
 				FishActivity.removeFood(name);
@@ -54,7 +54,10 @@ public class FoodController extends Thread {
 	}
 
 	public ArrayList<Food> getAllFood() {
-		return foods;
+		synchronized (foods) {
+			return foods;
+		}
+		
 	}
 
 	public boolean isFoodAviable(String name){
@@ -73,4 +76,5 @@ public class FoodController extends Thread {
 		else
 			return false;
 	}
+	
 }

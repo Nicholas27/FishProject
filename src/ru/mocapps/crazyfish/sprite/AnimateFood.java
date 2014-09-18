@@ -19,10 +19,21 @@ public class AnimateFood extends AnimatedSprite {
 	
 	@Override
 	protected void onManagedUpdate(final float pSecondsElapsed) {
-		this.setX(LogicController.getFood(foodName).getXPosition());
-		this.setY(LogicController.getFood(foodName).getYPosition());
-		// здесь мен€ютс€ координаты еды
-		super.onManagedUpdate(pSecondsElapsed);
+		try {
+			float[] position = LogicController.getFoodPosition(foodName);
+			this.setX(position[0]);
+			this.setY(position[1]);
+			// здесь мен€ютс€ координаты еды
+			super.onManagedUpdate(pSecondsElapsed);
+		} catch (Exception e){
+			
+		}
+	}
+	
+	public void removeFood(){
+		clearUpdateHandlers();
+		detachSelf();
+		dispose();
 	}
 
 	public String getName(){
