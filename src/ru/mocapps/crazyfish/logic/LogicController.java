@@ -3,12 +3,7 @@ package ru.mocapps.crazyfish.logic;
 import java.util.ArrayList;
 import java.util.Random;
 
-import org.andengine.util.debug.Debug;
-
-import android.util.Log;
-
 import ru.mocapps.crazyfish.exception.FishNotFoundException;
-import ru.mocapps.crazyfish.exception.FoodNotFoundException;
 
 public class LogicController extends Thread {
 	private static int delay = 50;
@@ -129,7 +124,6 @@ public class LogicController extends Thread {
 		synchronized (foodController) {
 			return foodController.isFoodAviable();
 		}
-
 	}
 
 	public static boolean isFoodAviable(String name) {
@@ -142,6 +136,7 @@ public class LogicController extends Thread {
 	public void run() {
 		while (true) {
 			long time1 = System.currentTimeMillis();
+			// делаем шаг для объектов
 			foodController.makeStep();
 			fishController.makeStep();
 
@@ -150,26 +145,6 @@ public class LogicController extends Thread {
 				fishController.removeFish(name);
 			}
 
-			
-			/*
-			for (Fish fish : fishController.getAllFish()) {
-				Log.d("fish log",
-						"fish: " + fish.getName() + "life = " + fish.getLife()
-								+ "; hunger = " + fish.getHunger());
-			}
-			Log.d("fish log", "COUNT = " + fishController.getAllFish().size());
-			Log.d("fish log", "================\n");
-
-			
-			for (Food food : foodController.getAllFood()) {
-				Log.d("food log", "food: " + food.getName());
-			}
-			Log.d("food log", "COUNT = " + foodController.getAllFood().size());
-			Log.d("food log", "================\n");
-
-			*/
-			
-			
 			long time2 = System.currentTimeMillis();
 			try {
 				Thread.sleep(Math.max(delay - (time2 - time1), 1));
@@ -179,6 +154,7 @@ public class LogicController extends Thread {
 		}
 	}
 
+	
 	public static int getFieldWidth() {
 		return fieldWidth;
 	}
