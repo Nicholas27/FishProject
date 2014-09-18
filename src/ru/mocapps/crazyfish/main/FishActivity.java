@@ -12,22 +12,19 @@ import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.ITouchArea;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.Background;
-
 import org.andengine.entity.util.FPSLogger;
-
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
 import org.andengine.opengl.texture.region.ITextureRegion;
-
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
 
 import ru.mocapps.crazyfish.logic.LogicController;
-
+import ru.mocapps.crazyfish.logic.SizeFish;
 import ru.mocapps.crazyfish.sprite.AnimateFish;
 import ru.mocapps.crazyfish.sprite.AnimateFood;
 import ru.mocapps.crazyfish.sprite.FishParts;
@@ -35,7 +32,6 @@ import android.hardware.SensorManager;
 import android.view.Display;
 
 import com.badlogic.gdx.math.Vector2;
-
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
@@ -232,11 +228,11 @@ public class FishActivity extends SimpleBaseGameActivity implements
 
 	public void addFish(float pX, float pY) {
 		AnimateFish animateFish;
-		String s_name = LogicController.addFish(pX, pY);
+		String fish_name = LogicController.addFish(pX, pY);
 		animateFish = new AnimateFish(pX, pY, fishHammer,
-				getVertexBufferObjectManager(), s_name);
+				getVertexBufferObjectManager(), mEngine, fish_name);
 
-		animateFish.animate(animationDelay, true);
+		// animateFish.animate(animationDelay, true);
 
 		scene.registerTouchArea(animateFish);
 		scene.attachChild(animateFish);
@@ -247,7 +243,7 @@ public class FishActivity extends SimpleBaseGameActivity implements
 		AnimateFood foodSprite;
 		String foodName = LogicController.addFood(xPosition, yPosition);
 		foodSprite = new AnimateFood(xPosition, yPosition, foodFish,
-				getVertexBufferObjectManager(), foodName);
+				getVertexBufferObjectManager(), mEngine, foodName);
 
 		scene.registerTouchArea(foodSprite);
 		scene.attachChild(foodSprite);
@@ -282,4 +278,13 @@ public class FishActivity extends SimpleBaseGameActivity implements
 		System.gc();
 	}
 
+	public static SizeFish getSize(String fishName) {
+		for (AnimateFish fish : listFish) {
+			if (fish.getName() == fishName) {
+				return new SizeFish(fish.getWidth(), fish.getHeight());
+			}
+		}
+
+		return null;
+	}
 }
