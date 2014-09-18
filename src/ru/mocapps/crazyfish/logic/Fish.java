@@ -140,9 +140,23 @@ public abstract class Fish {
 
 		//расчет угла поворота и движение
 		rotation = (float) Math.atan2(yVector, xVector);
-		position[0] += direction[0] * speed;
-		position[1] += direction[1] * speed;
-
+		float[] newposition = new float[2];
+		newposition[0] = position[0] + direction[0] * speed;
+		newposition[1] = position[1] + direction[1] * speed;
+		position = newposition;
+		/*
+		boolean isCollision = false;
+		for (Fish fish : LogicController.getAllFishes()) {
+			if (CMath.distance(newposition[0], newposition[1], fish.getXPosition(), fish.getYPosition()) < 15) {
+				isCollision = true;
+			}
+		}
+		
+		if (!isCollision){
+			position = newposition;
+		}
+		*/
+		
 		position[0] = Math.max(position[0], Math.min(position[0], LogicController.getFieldWidth()));
 		position[0] = Math.max(position[0], Math.min(position[0], LogicController.getFieldHeight()));
 

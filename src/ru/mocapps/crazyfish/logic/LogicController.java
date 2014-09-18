@@ -170,4 +170,8 @@ public class LogicController extends Thread {
 		return vector;
 	}
 
+	public static ArrayList<Fish> getAllFishes() {
+		return fishController.getAllFish();
+	}
+
 }
