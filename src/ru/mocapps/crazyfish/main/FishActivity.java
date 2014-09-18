@@ -81,7 +81,10 @@ public class FishActivity extends SimpleBaseGameActivity implements
 	public static TiledTextureRegion fishHammer2;
 
 	public static int animationDelay = 145;
-
+	
+	
+	public static FishActivity fishAct;
+	
 	@Override
 	public EngineOptions onCreateEngineOptions() {
 
@@ -97,6 +100,7 @@ public class FishActivity extends SimpleBaseGameActivity implements
 				ScreenOrientation.LANDSCAPE_FIXED, new RatioResolutionPolicy(
 						CAMERA_WIDTH, CAMERA_HEIGHT), camera);
 
+		fishAct = this;
 		return options;
 	}
 
@@ -226,7 +230,7 @@ public class FishActivity extends SimpleBaseGameActivity implements
 		return scene;
 	}
 
-	public void addFish(float pX, float pY) {
+	public  void addFish(float pX, float pY) {
 		AnimateFish animateFish;
 		String fish_name = LogicController.addFish(pX, pY);
 		animateFish = new AnimateFish(pX, pY, fishHammer,
@@ -239,7 +243,7 @@ public class FishActivity extends SimpleBaseGameActivity implements
 		listFish.add(animateFish);
 	}
 
-	public void addFood(float xPosition, float yPosition) {
+	public  void addFood(float xPosition, float yPosition) {
 		AnimateFood foodSprite;
 		String foodName = LogicController.addFood(xPosition, yPosition);
 		foodSprite = new AnimateFood(xPosition, yPosition, foodFish,
@@ -284,7 +288,6 @@ public class FishActivity extends SimpleBaseGameActivity implements
 				return new SizeFish(fish.getWidth(), fish.getHeight());
 			}
 		}
-
 		return null;
 	}
 }
