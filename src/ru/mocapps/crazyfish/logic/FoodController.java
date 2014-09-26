@@ -20,11 +20,8 @@ public class FoodController extends Thread {
 		}
 	}
 
-	public void addFood(float xPos, float yPos, String type, String name) {
-		if (type == "corn") {
-			foods.add(new FoodCorn(xPos, yPos, name));
-		}
-
+	public void addFood(float xPos, float yPos, FoodTypes type, String name) {
+		foods.add(new FoodCorn(xPos, yPos, name));
 	}
 
 	public void removeFood(String name) {

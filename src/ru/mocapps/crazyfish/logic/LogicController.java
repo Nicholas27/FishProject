@@ -6,7 +6,7 @@ import java.util.Random;
 import ru.mocapps.crazyfish.exception.FishNotFoundException;
 
 public class LogicController extends Thread {
-	private static int delay = 50;
+	private static int delay = 40;
 
 	private static int fieldWidth;
 	private static int fieldHeight;
@@ -15,7 +15,8 @@ public class LogicController extends Thread {
 	private static ArrayList<String> fishToDie;
 	private static Random random;
 	private static String[] fishTypes = new String[] { "small", "mid", "hammer" };
-	private static String[] foodTypes = new String[] { "corn" };
+
+	// private static String[] foodTypes = new String[] { "corn" };
 
 	public LogicController(int width, int height) {
 		fieldWidth = width;
@@ -38,7 +39,7 @@ public class LogicController extends Thread {
 
 	public static void addFood() {
 		synchronized (foodController) {
-			String foodType = foodTypes[random.nextInt(foodTypes.length)];
+			FoodTypes foodType = FoodTypes.values()[random.nextInt(FoodTypes.values().length)];
 			String foodName = foodType + "_" + randomName();
 			float xPos = random.nextInt(fieldWidth);
 			float yPos = random.nextInt(fieldHeight);
@@ -48,7 +49,15 @@ public class LogicController extends Thread {
 
 	public static String addFood(float x, float y) {
 		synchronized (foodController) {
-			String foodType = foodTypes[random.nextInt(foodTypes.length)];
+			FoodTypes foodType = FoodTypes.values()[random.nextInt(FoodTypes.values().length)];
+			String foodName = foodType + "_" + randomName();
+			foodController.addFood(x, y, foodType, foodName);
+			return foodName;
+		}
+	}
+
+	public static String addFood(float x, float y, FoodTypes foodType) {
+		synchronized (foodController) {
 			String foodName = foodType + "_" + randomName();
 			foodController.addFood(x, y, foodType, foodName);
 			return foodName;
@@ -57,7 +66,7 @@ public class LogicController extends Thread {
 
 	public static String addFish() {
 		synchronized (fishController) {
-			String fishType = fishTypes[random.nextInt(fishTypes.length)];
+			FishTypes fishType = FishTypes.values()[random.nextInt(FishTypes.values().length)];
 			String fishName = fishType + "_" + randomName();
 			float xPos = random.nextInt(fieldWidth);
 			float yPos = random.nextInt(fieldHeight);
@@ -66,22 +75,23 @@ public class LogicController extends Thread {
 		}
 	}
 
-	public static String addFish(float x, float y) {
+	public static String addFish(float x, float y, FishTypes fishType) {
 		synchronized (fishController) {
-			String fishType = fishTypes[random.nextInt(fishTypes.length)];
 			String fishName = fishType + "_" + randomName();
 			fishController.addFish(x, y, fishType, fishName);
 			return fishName;
 		}
 	}
+	
+	/*
+	 * public static String addFish(float x, float y) { synchronized
+	 * (fishController) { FishTypes fishType =
+	 * FishTypes.values()[random.nextInt(FishTypes.values().length)]; String
+	 * fishName = fishType + "_" + randomName(); fishController.addFish(x, y,
+	 * fishType, fishName); return fishName; } }
+	 */
 
-	public static String addFish(float x, float y, String fishType) {
-		synchronized (fishController) {
-			String fishName = fishType + "_" + randomName();
-			fishController.addFish(x, y, fishType, fishName);
-			return fishName;
-		}
-	}
+	
 
 	public static void removeFood(String name) {
 		synchronized (foodController) {
@@ -154,7 +164,6 @@ public class LogicController extends Thread {
 		}
 	}
 
-	
 	public static int getFieldWidth() {
 		return fieldWidth;
 	}

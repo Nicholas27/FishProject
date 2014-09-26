@@ -13,18 +13,19 @@ public class FishController {
 	}
 
 	// add fish by type and position
-	public void addFish(float xPos, float yPos, String type, String name) {
-
-		if (type == "small") {
-			fishes.add(new SmallFish(xPos, yPos, name));
-		}
-
-		if (type == "mid") {
-			fishes.add(new MidFish(xPos, yPos, name));
-		}
-
-		if (type == "hammer") {
+	public void addFish(float xPos, float yPos, FishTypes fishType, String name) {
+		switch (fishType) {
+		case Hammer:
 			fishes.add(new HammerFish(xPos, yPos, name));
+			break;
+		case Mid:
+			fishes.add(new MidFish(xPos, yPos, name));
+			break;
+		case Small:
+			fishes.add(new SmallFish(xPos, yPos, name));
+			break;
+		default:
+			break;
 		}
 	}
 

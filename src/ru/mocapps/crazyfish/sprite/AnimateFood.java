@@ -12,10 +12,7 @@ public class AnimateFood extends AnimatedSprite {
 	private String foodName;
 	private Engine mEngine;
 
-	public AnimateFood(float pX, float pY,
-			ITiledTextureRegion pTiledTextureRegion,
-			VertexBufferObjectManager vertexBufferObjectManager,
-			Engine mEngine, String foodName) {
+	public AnimateFood(float pX, float pY, ITiledTextureRegion pTiledTextureRegion, VertexBufferObjectManager vertexBufferObjectManager, Engine mEngine, String foodName) {
 
 		super(pX, pY, pTiledTextureRegion, vertexBufferObjectManager);
 
@@ -42,7 +39,8 @@ public class AnimateFood extends AnimatedSprite {
 			public void run() {
 				clearUpdateHandlers();
 				detachSelf();
-				dispose();;
+				dispose();
+				;
 			}
 		});
 

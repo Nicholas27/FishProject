@@ -3,6 +3,8 @@ package ru.mocapps.crazyfish.logic;
 import java.util.ArrayList;
 import java.util.Random;
 
+import android.util.Log;
+
 public abstract class Fish {
 	private Random random;
 
@@ -73,6 +75,8 @@ public abstract class Fish {
 	}
 
 	protected float[] generateTargetPoint() {
+		
+		
 		float[] target = new float[2];
 		switch (targetType) {
 		case Food:
@@ -123,6 +127,10 @@ public abstract class Fish {
 	}
 
 	public void makeStep() {
+		//checkMakeStep();
+		//if (true)
+		//	return;
+		
 		float[] target = generateTargetPoint();
 
 		// vector
@@ -163,6 +171,46 @@ public abstract class Fish {
 		isTargetReached(target); // проверка достижения цели и поедание еды
 		calculateLifeHunger();
 	}
+	
+	int pos = 1;
+	int counter = 0;
+	
+	public void checkMakeStep(){
+		pos = 1;
+		switch (pos) {
+		case 1:
+			position[0] = 200;
+			position[1] = 200;
+			rotation = (float) Math.atan2(0, 1); //y-x    0
+			Log.d("pos", "pos1");
+			break;
+
+		case 2:
+			position[0] = 200;							
+			position[1] = 200;							
+			rotation = (float) Math.atan2(-1, 0); //y-x   90
+			Log.d("pos", "pos2");
+			break;
+			
+		case 3:
+			position[0] = 300;							
+			position[1] = 200;							
+			rotation = (float) Math.atan2(-0.5, 0.5); //y-x 45
+			Log.d("pos", "pos3");
+			break;
+			
+		case 4:
+			position[0] = 300;							
+			position[1] = 200;							
+			rotation = (float) Math.atan2(-0.5, -0.5); //y-x 135
+			Log.d("pos", "pos4");
+			pos = 0;
+			break;
+		default:
+			break;
+		}
+		
+	}
 
 	//поедание еды, восстановления голода
 	private void eatFood() {
@@ -202,7 +250,7 @@ public abstract class Fish {
 	}
 
 	private boolean isTargetReached(float[] target) {
-		if (CMath.distance(position[0], position[1], target[0], target[1]) < 10) {
+		if (CMath.distance(position[0], position[1], target[0], target[1]) < 20) {
 			switch (targetType) {
 			case Food:
 				// if we enough near food
