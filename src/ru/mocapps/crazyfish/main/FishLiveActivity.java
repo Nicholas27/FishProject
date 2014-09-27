@@ -8,21 +8,24 @@ import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.andengine.entity.primitive.Rectangle;
-import org.andengine.entity.scene.IOnAreaTouchListener;
-import org.andengine.entity.scene.IOnSceneTouchListener;
-import org.andengine.entity.scene.ITouchArea;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.Background;
+import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.util.FPSLogger;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
-import org.andengine.input.touch.TouchEvent;
+import org.andengine.extension.ui.livewallpaper.BaseLiveWallpaperService;
+import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
+import org.andengine.opengl.util.GLState;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
-import org.andengine.ui.activity.SimpleBaseGameActivity;
+
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 import ru.mocapps.crazyfish.logic.FishTypes;
 import ru.mocapps.crazyfish.logic.FoodTypes;
@@ -32,16 +35,12 @@ import ru.mocapps.crazyfish.sprite.AnimateFood;
 import android.hardware.SensorManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.WindowManager;
 
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-
-public class FishActivity extends SimpleBaseGameActivity implements IOnSceneTouchListener, IOnAreaTouchListener {
+public class FishLiveActivity extends BaseLiveWallpaperService {
 
 	public static int CAMERA_WIDTH;
 	public static int CAMERA_HEIGHT;
-	public static final float DEMO_VELOCITY = 100.0f;
 	public static int animationDelay = 145;
 	private static Random random = new Random();
 	private LogicController controller;
@@ -69,16 +68,42 @@ public class FishActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	public static TiledTextureRegion backnail;
 	public static TiledTextureRegion middlenail;
 	public static TiledTextureRegion fishHammer2;
-
-	// public static FishActivity fishAct;
+	
+	public final static String PREFERENCES = "gc986.template.livewallpaper"; // Адрес хранилища настроек 
 
 	@Override
+	public void onSurfaceChanged(final GLState pGLState, final int pWidth, final int pHeight) {
+		super.onSurfaceChanged(pGLState, pWidth, pHeight);
+		final DisplayMetrics displayMetrics = new DisplayMetrics();
+		WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
+		wm.getDefaultDisplay().getMetrics(displayMetrics);
+		wm.getDefaultDisplay().getRotation();
+		// весь предыдущий код нужен для того что бы узнать новые размеры окна
+		// так как наша картинка масштабируется по размерам окна
+		this.mEngine.getCamera().set(0, 0, pWidth, pHeight); // это и есть та
+																// самая строчка
+	}
+
+	/** Вычисление пропорции для изображений */
+	public float GetTrueProportion(int width, int height, float imgWidth, float imgHeight) {
+		// Вычисление пропорций для правильного отображения картинок
+		float _Ratio = 0;
+		if (imgWidth < imgHeight) {
+			_Ratio = (float) width / imgWidth;
+		} else {
+			_Ratio = (float) height / imgHeight;
+		}
+		return _Ratio;
+	}
+
+	/** Создание движка */
+	@Override
 	public EngineOptions onCreateEngineOptions() {
-		// width/height
-		DisplayMetrics dm = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(dm);
-		CAMERA_WIDTH = dm.widthPixels;
-		CAMERA_HEIGHT = dm.heightPixels;
+		final DisplayMetrics displayMetrics = new DisplayMetrics();
+		WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
+		wm.getDefaultDisplay().getMetrics(displayMetrics);
+		CAMERA_WIDTH = displayMetrics.widthPixels;
+		CAMERA_HEIGHT = displayMetrics.heightPixels;
 
 		// create camera
 		camera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
@@ -111,28 +136,15 @@ public class FishActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 			fishTextures.get(i).load();
 		}
 	}
-
+	
 	@Override
-	public boolean onSceneTouchEvent(Scene pScene, TouchEvent pSceneTouchEvent) {
-		if (pSceneTouchEvent.isActionDown()) {
-			// this.addFish(pSceneTouchEvent.getX(), pSceneTouchEvent.getY());
-			FoodTypes foodType = getRandromFoodType();
-			this.addFood(pSceneTouchEvent.getX(), pSceneTouchEvent.getY(), foodType);
-			return true;
-		}
-		return false;
+	public void onCreateResources(OnCreateResourcesCallback pOnCreateResourcesCallback) throws Exception {
+		loadGfx();
+		
+		pOnCreateResourcesCallback.onCreateResourcesFinished();
 	}
-
-	@Override
-	public boolean onAreaTouched(TouchEvent pSceneTouchEvent, ITouchArea pTouchArea, float pTouchAreaLocalX, float pTouchAreaLocalY) {
-		if (pSceneTouchEvent.isActionDown()) {
-			// this.removeFish((AnimateFish)pTouchArea);
-			// removeFood((AnimateFood) pTouchArea);
-			return true;
-		}
-		return false;
-	}
-
+	
+	
 	private int getFoodTypeID(FoodTypes type) {
 		switch (type) {
 		case Corn1:
@@ -190,43 +202,9 @@ public class FishActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		listFood.add(foodSprite);
 	}
 
-	// удаление еды, вызывается в LogicController
-	public static void removeFood(String s_name) {
-		for (AnimateFood food : listFood) {
-			if (food.getName() == s_name) {
-				// FishActivity.scene.unregisterTouchArea(food);
-				// FishActivity.scene.detachChild(food);
-				Log.d("food", food.getName() + " deleted");
-				food.removeFood();
-				listFood.remove(food);
-
-				break;
-			}
-		}
-		System.gc();
-	}
-
-	// удаление рыбы, вызывается в LogicController
-	public static void removeFish(String fishName) {
-		for (AnimateFish fish : listFish) {
-			if (fish.getName() == fishName) {
-				// FishActivity.scene.unregisterTouchArea(food);
-				// FishActivity.scene.detachChild(food);
-				fish.removeFish();
-				listFish.remove(fish);
-				break;
-			}
-		}
-		System.gc();
-	}
 
 	@Override
-	protected void onCreateResources() {
-		loadGfx();
-	}
-
-	@Override
-	protected Scene onCreateScene() {
+	public void onCreateScene(OnCreateSceneCallback pOnCreateSceneCallback) throws Exception {
 		this.mEngine.registerUpdateHandler(new FPSLogger());
 
 		controller = new LogicController(CAMERA_WIDTH, CAMERA_HEIGHT);
@@ -238,9 +216,9 @@ public class FishActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 
 		scene = new Scene();
 		scene.setBackground(new Background(pRed, pGreen, pBlue));
-		scene.setOnSceneTouchListener(this);
+		//scene.setOnSceneTouchListener(this);
 
-		FishActivity.physicsWorld = new PhysicsWorld(new Vector2(0, SensorManager.GRAVITY_EARTH), true);
+		this.physicsWorld = new PhysicsWorld(new Vector2(0, SensorManager.GRAVITY_EARTH), true);
 
 		final VertexBufferObjectManager vertexBufferObjectManager = this.getVertexBufferObjectManager();
 		final Rectangle ground = new Rectangle(0, CAMERA_HEIGHT - 2, CAMERA_WIDTH, 2, vertexBufferObjectManager);
@@ -249,17 +227,17 @@ public class FishActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		final Rectangle right = new Rectangle(CAMERA_WIDTH - 2, 0, 2, CAMERA_HEIGHT, vertexBufferObjectManager);
 
 		final FixtureDef wallFixtureDef = PhysicsFactory.createFixtureDef(0, 0.5f, 0.5f);
-		PhysicsFactory.createBoxBody(FishActivity.physicsWorld, ground, BodyType.StaticBody, wallFixtureDef);
-		PhysicsFactory.createBoxBody(FishActivity.physicsWorld, roof, BodyType.StaticBody, wallFixtureDef);
-		PhysicsFactory.createBoxBody(FishActivity.physicsWorld, left, BodyType.StaticBody, wallFixtureDef);
-		PhysicsFactory.createBoxBody(FishActivity.physicsWorld, right, BodyType.StaticBody, wallFixtureDef);
+		PhysicsFactory.createBoxBody(this.physicsWorld, ground, BodyType.StaticBody, wallFixtureDef);
+		PhysicsFactory.createBoxBody(this.physicsWorld, roof, BodyType.StaticBody, wallFixtureDef);
+		PhysicsFactory.createBoxBody(this.physicsWorld, left, BodyType.StaticBody, wallFixtureDef);
+		PhysicsFactory.createBoxBody(this.physicsWorld, right, BodyType.StaticBody, wallFixtureDef);
 
 		scene.attachChild(ground);
 		scene.attachChild(roof);
 		scene.attachChild(left);
 		scene.attachChild(right);
-		scene.registerUpdateHandler(FishActivity.physicsWorld);
-		scene.setOnAreaTouchListener(this);
+		scene.registerUpdateHandler(this.physicsWorld);
+		//scene.setOnAreaTouchListener(this);
 
 		addFish(0, 50, FishTypes.Hammer);
 		addFish(150, 50, FishTypes.Mid);
@@ -276,12 +254,13 @@ public class FishActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		 * addFish(random.nextInt(CAMERA_WIDTH-1),
 		 * random.nextInt(CAMERA_HEIGHT-1), getRandomFishType()); }
 		 */
-		return scene;
+		// Отправляем сообщение что закончили формировать сцену
+		pOnCreateSceneCallback.onCreateSceneFinished(scene);
 	}
 
-	/*
-	 * public static SizeFish getSize(String fishName) { for (AnimateFish fish :
-	 * listFish) { if (fish.getName() == fishName) { return new
-	 * SizeFish(fish.getWidth(), fish.getHeight()); } } return null; }
-	 */
+	@Override
+	public void onPopulateScene(Scene pScene, OnPopulateSceneCallback pOnPopulateSceneCallback) throws Exception {
+		// TODO Auto-generated method stub
+		pOnPopulateSceneCallback.onPopulateSceneFinished();
+	}
 }

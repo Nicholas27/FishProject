@@ -2,7 +2,6 @@ package ru.mocapps.crazyfish.logic;
 
 import java.util.ArrayList;
 
-import ru.mocapps.crazyfish.main.FishActivity;
 
 public class FoodController extends Thread {
 
@@ -28,7 +27,7 @@ public class FoodController extends Thread {
 		//Log.d("logic", "foodController eat food: " + name);
 		for (Food food : foods) {
 			if (food.getName() == name) {
-				FishActivity.removeFood(name);
+				//FishActivity.removeFood(name);
 				foods.remove(food);
 				break;
 			}

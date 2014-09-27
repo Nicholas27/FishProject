@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen 
+        xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="Настройки">
+
+    <PreferenceCategory	android:title="LiweWallpaper"/>
+    <CheckBoxPreference
+        android:key="OnOff"
+        android:title="@string/app_name"
+        android:defaultValue="true"
+    />
+  
+</PreferenceScreen>

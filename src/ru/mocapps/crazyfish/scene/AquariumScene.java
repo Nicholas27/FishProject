@@ -19,8 +19,7 @@ import org.andengine.util.color.Color;
 import org.andengine.util.modifier.IModifier;
 
 import android.util.Log;
-
-import ru.mocapps.crazyfish.main.FishActivity;
+import ru.mocapps.crazyfish.main.FishLiveActivity;
 
 public class AquariumScene extends CameraScene
 {
@@ -30,7 +29,7 @@ public class AquariumScene extends CameraScene
 	private ITextureRegion splashTR;
 
 	public AquariumScene() {
-		super(FishActivity.camera);
+		super(FishLiveActivity.camera);
 		setBackground(new Background(1,1,1));
 		
 		//loadResources();	

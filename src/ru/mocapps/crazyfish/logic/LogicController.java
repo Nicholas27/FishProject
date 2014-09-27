@@ -151,9 +151,9 @@ public class LogicController extends Thread {
 			fishController.makeStep();
 
 			// удаляем умерших от голода рыб
-			for (String name : fishToDie) {
+			/*for (String name : fishToDie) {
 				fishController.removeFish(name);
-			}
+			}*/
 
 			long time2 = System.currentTimeMillis();
 			try {

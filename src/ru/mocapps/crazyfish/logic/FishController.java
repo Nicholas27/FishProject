@@ -3,7 +3,6 @@ package ru.mocapps.crazyfish.logic;
 import java.util.ArrayList;
 
 import ru.mocapps.crazyfish.exception.FishNotFoundException;
-import ru.mocapps.crazyfish.main.FishActivity;
 
 public class FishController {
 	private ArrayList<Fish> fishes;
@@ -34,7 +33,7 @@ public class FishController {
 		for (Fish fish : fishes) {
 			if (fish.getName() == name) {
 				fishes.remove(fish);
-				FishActivity.removeFish(name);
+				//FishActivity.removeFish(name);
 				break;
 			}
 		}
