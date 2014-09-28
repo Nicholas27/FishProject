@@ -202,6 +202,36 @@ public class FishLiveActivity extends BaseLiveWallpaperService {
 		listFood.add(foodSprite);
 	}
 
+	
+	// удаление еды, вызывается в LogicController
+	public static void removeFood(String s_name) {
+		for (AnimateFood food : listFood) {
+			if (food.getName() == s_name) {
+				// FishActivity.scene.unregisterTouchArea(food);
+				// FishActivity.scene.detachChild(food);
+				Log.d("food", food.getName() + " deleted");
+				food.removeFood();
+				listFood.remove(food);
+
+				break;
+			}
+		}
+		System.gc();
+	}
+
+	// удаление рыбы, вызывается в LogicController
+	public static void removeFish(String fishName) {
+		for (AnimateFish fish : listFish) {
+			if (fish.getName() == fishName) {
+				// FishActivity.scene.unregisterTouchArea(food);
+				// FishActivity.scene.detachChild(food);
+				fish.removeFish();
+				listFish.remove(fish);
+				break;
+			}
+		}
+		System.gc();
+	}
 
 	@Override
 	public void onCreateScene(OnCreateSceneCallback pOnCreateSceneCallback) throws Exception {
